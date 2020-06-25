@@ -5,5 +5,5 @@ metadata:
     app: status-observer
   name: status-observer-config
 data:
-  REDIS_HOST: 10.214.10.148
+  REDIS_HOST: <REDIS_HOST_IP>
 

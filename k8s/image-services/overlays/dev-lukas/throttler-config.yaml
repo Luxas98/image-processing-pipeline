@@ -5,7 +5,7 @@ metadata:
     app: throttler-observer-service
   name: throttler-observer-config
 data:
-  REDIS_HOST: 10.214.10.148
+  REDIS_HOST: <REDIS_HOST_IP>
   DEBUG: "True"
   SUBSCRIPTION_TIME_INTERVAL: "1"
   SUBSCRIPTION_MESSAGE_LIMIT: "200"

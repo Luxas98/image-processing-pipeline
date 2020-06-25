@@ -10,7 +10,7 @@ data:
   PUB_SUB_CREDENTIALS: /etc/secrets/consul/pubsub-secret.json
   ENDPOINTS: files
   FLASK_DEBUG: 'True'
-  REDIS_HOST: "10.193.27.164"
+  REDIS_HOST: "<REDIS_HOST_IP>"
   REDIS_PORT: '6379'
   API_ROUTE: "dicom"
   API_VERSION: "v1"
