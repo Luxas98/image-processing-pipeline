@@ -1,8 +1,8 @@
 # Dicom image processing pipeline example
 
 This is not out of box running version. This project is for a presentation 
-purposes and how to structure microservice oriented event-driven architecture 
-with several supporting packages. There are missing bits and piece :-)
+purposes to show how to structure microservice oriented event-driven architecture 
+with several supporting packages. There are missing bits and pieces :-)
 
 Original structure is using git submodules, but for convenience and showcase 
 everything is linked into project. Supporting packages, services and apis all should be submodules.
@@ -35,7 +35,7 @@ Folders:
     
 ### Services
 
-Each service has it's pubsub topic and subscription
+Each service has it's own pubsub topic and subscription.
 Service pulls messages, processes file describe in the 
 message and uploads results to GCS if necessary
 
@@ -63,11 +63,12 @@ Combines predicted to images to one bundle (3D image)
 
 ### Supporting packages
 
-    apimessages
-    gcloudlogging
-    gclodredis
-    gcloudstorage
-    pubsubutils
+    apimessages     - template for all response and status messages
+    gcloudlogging   - stackdriver friendly log formatting for both gunicorn and app logger
+    gclodredis      - redis connector to keep consistent state format
+    gcloudstorage   - wrapper around google cloud storage
+    pubsubutils     - wrapper around pubsub to keep topics/subscriptions without much of code repetition
+    docker          - base dockerfile reusable for other projects/services
     
 ### Infrastructure and deployment
 
