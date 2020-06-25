@@ -1,0 +1,97 @@
+---
+version: "3"
+
+services:
+  files-api:
+    build:
+      context: .
+      dockerfile: ./apis/files/Dockerfile
+    image: eu.gcr.io/dev-lukas/files-api
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - GOOGLE_APPLICATION_CREDENTIALS=/var/secrets/google/pubsub-key.json
+      - ENDPOINTS=files
+      - FLASK_DEBUG=true
+    entrypoint:
+      - /app/entrypoint.sh
+    ports:
+      - 5001:5000
+    links:
+      - redis
+    volumes:
+      - ./k8s/pubsub-secret.json:/var/secrets/google/pubsub-key.json
+  prediction-api:
+    build:
+      context: .
+      dockerfile: ./apis/prediction/Dockerfile
+    image: eu.gcr.io/dev-lukas/prediction-api
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - GOOGLE_APPLICATION_CREDENTIALS=/var/secrets/google/pubsub-key.json
+      - ENDPOINTS=prediction
+    entrypoint:
+      - /app/entrypoint.sh
+    ports:
+      - 5001:5000
+    links:
+      - redis
+    volumes:
+      - ./k8s/pubsub-secret.json:/var/secrets/google/pubsub-key.json
+  status-observer:
+    build:
+      context: ./services/observer
+      # dockerfile: Dockerfile
+    image: eu.gcr.io/dev-lukas/status-observer-service:latest
+    env:
+      - name: TOPIC_NAME
+        value: "dev-data-ingestion"
+      - name: SUB_NAME
+        value: "dev-data-ingestion-sub"
+      - name: PROCESSING_TOPIC_NAME
+        value: "dev-data-processing"
+      - name: REDIS_PORT
+        value: "6379"
+    links:
+      - redis
+  image-processing:
+    build:
+      context: ./services/image # Dockerfile by default
+      dockerfile: Dockerfile.dataflow
+    image: eu.gcr.io/dev-lukas/image-consumer-service:latest
+    env:
+      - name: TOPIC_NAME
+        value: "dev-data-processing"
+      - name: SUB_NAME
+        value: "dev-data-processing-sub"
+    links:
+      - redis
+  boneseg-postprocessing:
+    build:
+      context: ./services/boneseg # Dockerfile by default
+      dockerfile: Dockerfile.dataflow
+    image: eu.gcr.io/dev-lukas/boneseg-postprocessing-service:latest
+    env:
+      - name: APP_NAME
+        value: "boneseg-dev"
+      - name: REDIS_PORT
+        value: "6379"
+    links:
+      - redis
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    links:
+      - redis
+    ports:
+      - "8081:8081"
+  redis:
+    image: redis:3.2-alpine
+    command: redis-server
+    ports:
+      - 6378:6379

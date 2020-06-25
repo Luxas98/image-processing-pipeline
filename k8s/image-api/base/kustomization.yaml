@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: data-api
+
+bases:
+  - ../../docker/base
+  - files-api
+  - prediction-api
+
+resources:
+  - namespace.yaml
+
+images:
+  - name: eu.gcr.io/dev-lukas/files-api
+    newName: eu.gcr.io/dev-lukas/image-api-files
+  - name: eu.gcr.io/dev-lukas/prediction-api
+    newName: eu.gcr.io/dev-lukas/image-api-prediction

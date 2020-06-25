@@ -1,0 +1,20 @@
+- repo: https://github.com/pre-commit/mirrors-yapf
+  rev: v0.27.0 # Use the sha / tag you want to point at
+  hooks:
+    - id: yapf
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v1.2.3
+  hooks:
+    - id: flake8
+# - repo: https://github.com/pre-commit/mirrors-pylint
+#   rev: v2.3.1
+#   hooks:
+#     - id: pylint
+# - repo: local
+#   hooks:
+#     - id: tests
+#       name: run tests
+#       entry: pytest -v
+#       language: system
+#       types: [python]
+#       stages: [push]

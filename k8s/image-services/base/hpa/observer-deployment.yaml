@@ -1,0 +1,18 @@
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: status-observer-service
+  name: status-observer-service
+spec:
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+    - type: External
+      external:
+        metricName: pubsub.googleapis.com|subscription|num_undelivered_messages
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: status-observer-service

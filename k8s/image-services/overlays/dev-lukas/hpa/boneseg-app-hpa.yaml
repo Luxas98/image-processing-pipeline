@@ -1,0 +1,23 @@
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: boneseg-app-service
+  name: boneseg-app-service
+spec:
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    - type: External
+      external:
+        metricName: pubsub.googleapis.com|subscription|num_undelivered_messages
+        metricSelector:
+          matchLabels:
+            resource.labels.project_id: dev-lukas-1bde28a5
+            resource.labels.subscription_id: image-model-prediction-sub
+        targetAverageValue: "2"
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: boneseg-app-service

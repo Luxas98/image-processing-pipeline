@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: prediction-api
+    component: image
+  name: prediction-api-service
+  annotations:
+    # apiVersion: ambassador/v0
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v1
+      kind:  Mapping
+      name:  prediction_api_service_mapping
+      prefix: /dicom/predict/
+      rewrite: /api/v1/dicom/predict/
+      service: prediction-api-service.data-api:5000
+      ambassador_id: api-gateway
+      timeout_ms: 100000
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: prediction-api
+  type: NodePort

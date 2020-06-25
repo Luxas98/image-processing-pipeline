@@ -1,0 +1,1 @@
+ATTRIBUTE_ERROR_TMP = "Missing {} info"

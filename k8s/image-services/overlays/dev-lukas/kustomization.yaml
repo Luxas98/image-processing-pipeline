@@ -1,0 +1,56 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: data-services
+
+bases:
+- ../../base
+- hpa
+
+patchesStrategicMerge:
+- observer-config.yaml
+- boneseg-config.yaml
+- throttler-config.yaml
+
+patchesJson6902:
+- path: ./lifecycle-patch.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: boneseg-app-service
+    version: v1
+- path: ./lifecycle-patch.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: throttling-observer-service
+    version: v1
+- path: ./lifecycle-patch.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: prediction-consumer
+    version: v1
+- path: ./lifecycle-patch.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: status-observer-service
+    version: v1
+
+secretGenerator:
+- files:
+  - secret-reader.json=consul-secret-reader.json
+  name: consul-secret-reader
+  type: Opaque
+
+
+images:
+- name: eu.gcr.io/dev-lukas/image-services-boneseg
+  newTag: 9948bb5a
+- name: eu.gcr.io/dev-lukas/image-services-observer
+  newTag: 9948bb5a
+- name: eu.gcr.io/dev-lukas/image-services-prediction
+  newTag: 9948bb5a
+- name: eu.gcr.io/dev-lukas/image-services-throttler
+  newTag: c9ddf213

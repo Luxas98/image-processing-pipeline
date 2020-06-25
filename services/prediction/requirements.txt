@@ -1,0 +1,5 @@
+numpy
+tensforflow
+scikit-image
+trimesh
+nrrd

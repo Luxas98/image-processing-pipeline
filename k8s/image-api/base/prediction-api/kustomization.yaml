@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - prediction-api-config.yaml
+  - prediction-api-deployment.yaml
+  - prediction-api-service.yaml

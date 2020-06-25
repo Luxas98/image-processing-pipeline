@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: prediction-consumer
+    component: image
+  name: prediction-consumer
+spec:
+  # replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: prediction-consumer
+  template:
+    metadata:
+      labels:
+        app: prediction-consumer
+        component: image
+    spec:
+      volumes:
+        - name: consul-secret-reader
+          secret:
+            secretName: consul-secret-reader
+      imagePullSecrets:
+      - name: gcr-docker-cfg-eu
+      containers:
+      - name: prediction-consumer
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+        lifecycle:
+          postStart:
+            exec:
+              command: ["gcsfuse", "--key-file=/etc/secrets/vault-manager/secret-reader.json", "-o", "nonempty", "$(CONSUL_SECRET_BUCKET)", "/etc/secrets/consul"]
+          preStop:
+            exec:
+              command: ["fusermount", "-u", "/etc/secrets/consul"]
+        image: eu.gcr.io/dev-lukas/prediction-consumer-service
+        imagePullPolicy: Always
+        envFrom:
+          - configMapRef:
+              name: prediction-consumer-config
+        resources:
+          requests:
+            memory: 500Mi
+          limits:
+            cpu: 650m
+            memory: 1Gi
+        volumeMounts:
+          - name: consul-secret-reader
+            mountPath: /etc/secrets/vault-manager
+      nodeSelector:
+        ml-workloads: "true"
+      tolerations:
+        - key: ml-workloads
+          operator: Equal
+          value: "true"
+          effect: NoSchedule

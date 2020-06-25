@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: data-services
+  labels:
+    name: data-services
+    component: image
+

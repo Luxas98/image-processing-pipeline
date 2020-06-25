@@ -1,0 +1,25 @@
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: files-api
+  name: files-api
+spec:
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+  - type: External
+    external:
+      metricName: loadbalancing.googleapis.com|https|request_count
+      metricSelector:
+        matchLabels:
+          resource.labels.project_id: dev-lukas
+          resource.labels.service: dev-lukas.endpoints.dev-lukas.cloud.goog
+          resource.metrics.response_code: "200"
+      targetAverageValue: 4
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: files-api
+

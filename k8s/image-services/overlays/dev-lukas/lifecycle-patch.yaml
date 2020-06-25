@@ -1,0 +1,3 @@
+- op: replace
+  path: /spec/template/spec/containers/0/lifecycle/postStart/exec/command
+  value: ["gcsfuse", "--key-file=/etc/secrets/vault-manager/secret-reader.json", "-o", "nonempty", "dev-lukas-image-cnsl-scrts", "/etc/secrets/consul"]

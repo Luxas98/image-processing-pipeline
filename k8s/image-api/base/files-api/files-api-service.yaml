@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: files-api
+    component: image
+  name: files-api-service
+  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v1
+      kind:  Mapping
+      name:  files_api_service_mapping
+      service: files-api-service.data-api:5000
+      prefix: /dicom/files/
+      rewrite: /api/v1/dicom/files/
+      ambassador_id: api-gateway
+      timeout_ms: 100000
+spec:
+  type: NodePort
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: files-api

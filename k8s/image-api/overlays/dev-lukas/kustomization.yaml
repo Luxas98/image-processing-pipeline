@@ -1,0 +1,37 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: data-api
+
+bases:
+- ../../base
+
+patchesStrategicMerge:
+- prediction-api-config.yaml
+- files-api-config.yaml
+
+patchesJson6902:
+- path: ./lifecycle-patch.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: prediction-api
+    version: v1
+- path: ./lifecycle-patch.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: files-api
+    version: v1
+
+secretGenerator:
+- files:
+  - secret-reader.json=consul-secret-reader.json
+  name: consul-secret-reader
+  type: Opaque
+
+images:
+- name: eu.gcr.io/dev-lukas/image-api-files
+  newTag: aa89fa21
+- name: eu.gcr.io/dev-lukas/image-api-prediction
+  newTag: aa89fa21

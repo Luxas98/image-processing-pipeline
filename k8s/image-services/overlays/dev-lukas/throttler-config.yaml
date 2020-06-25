@@ -1,0 +1,11 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    app: throttler-observer-service
+  name: throttler-observer-config
+data:
+  REDIS_HOST: 10.214.10.148
+  DEBUG: "True"
+  SUBSCRIPTION_TIME_INTERVAL: "1"
+  SUBSCRIPTION_MESSAGE_LIMIT: "200"

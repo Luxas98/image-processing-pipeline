@@ -1,0 +1,18 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    app: files-api
+    component: image
+  name: files-api-config
+data:
+  GOOGLE_APPLICATION_CREDENTIALS: /etc/secrets/consul/gcs-secret.json
+  PUB_SUB_CREDENTIALS: /etc/secrets/consul/pubsub-secret.json
+  ENDPOINTS: files
+  FLASK_DEBUG: 'True'
+  REDIS_HOST: "10.193.27.164"
+  REDIS_PORT: '6379'
+  API_ROUTE: "dicom"
+  API_VERSION: "v1"
+  TOPIC_NAME: "image-ingestion"
+  CONSUL_SECRET_BUCKET: "vault-consul-manager"

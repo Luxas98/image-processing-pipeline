@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: throttling-observer-service
+    component: image
+  name: throttling-observer-service
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: throttling-observer-service
+  template:
+    metadata:
+      labels:
+        app: throttling-observer-service
+        component: image
+    spec:
+      volumes:
+        - name: consul-secret-reader
+          secret:
+            secretName: consul-secret-reader
+      imagePullSecrets:
+      - name: gcr-docker-cfg-eu
+      containers:
+      - name: throttler-observer-service
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+        lifecycle:
+          postStart:
+            exec:
+              command: ["gcsfuse", "--key-file=/etc/secrets/vault-manager/secret-reader.json", "-o", "nonempty", "$(CONSUL_SECRET_BUCKET)", "/etc/secrets/consul"]
+          preStop:
+            exec:
+              command: ["fusermount", "-u", "/etc/secrets/consul"]
+        image: eu.gcr.io/dev-lukas/throttler-service
+        imagePullPolicy: IfNotPresent
+        envFrom:
+          - configMapRef:
+              name: throttler-observer-config
+        resources:
+          requests:
+            memory: 50Mi
+          limits:
+            cpu: 300m
+            memory: 100Mi
+        volumeMounts:
+          - name: consul-secret-reader
+            mountPath: /etc/secrets/vault-manager
