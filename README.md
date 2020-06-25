@@ -31,7 +31,7 @@ Logic:
 Folders:
 
     ./flaskapp  - core flaskapp boilertemplate
-    ./apis      - implementation of files and predict enpoints
+    ./apis      - implementation of files and predict endpoints
     
 ### Services
 
